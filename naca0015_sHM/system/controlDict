@@ -1,0 +1,97 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.1                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+// FoamX Case Dictionary.
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "/home/nikwik/OpenFOAM/nikwik-1.1/run/cavInterFoam";
+    case            "naca-0012-2d";
+    instance        "system";
+    local           "";
+
+    class           dictionary;
+    object          controlDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Foam Application Class
+applicationClass pimpleFoam;
+
+// Start point of run
+startFrom       latestTime; //startTime;
+
+// Calculation start time
+startTime       0.0;
+
+// End point of run
+stopAt          endTime; //nextWrite; //writeNow; //noWriteNow;
+
+// Calculation end time
+endTime         1.0;
+
+// Calculation time step
+deltaT          1e-05;
+
+// Type of write output control
+writeControl    timeStep; //adjustableRunTime;
+
+// Interval with which the results are output
+writeInterval 25;
+
+runTimeModifiable yes;
+
+/*maxCo 0.5;*/
+maxCo 5.0;
+
+/*minDeltaT 1e-6;*/
+
+// Limits number of time directories before overwriting
+purgeWrite      20;
+
+// Write Format
+writeFormat     ascii;
+
+// Significant figures of written ASCII data
+writePrecision  6;
+
+// Write Compression
+writeCompression uncompressed;
+
+// Time directories name format
+timeFormat      general;
+
+// Decimal precision of time directory names
+timePrecision   6;
+
+// Automatic adjustment of time step?
+adjustTimeStep  false;
+
+functions
+{
+    forces
+    {
+        type                forces;
+        functionObjectLibs  ("libforces.so");
+        patches             (naca0015);
+        rhoInf              998.16;
+        rho             rhoInf;
+        CofR                (0 0 0);
+        writeControl        timeStep;
+        writeInterval      1; 
+        log                 true;
+        
+    }
+}
+
+// ************************************************************************* //
+

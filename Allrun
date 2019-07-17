@@ -1,0 +1,33 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # Run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# Make 3D mesh in slab of cells.
+cd naca0015_sHM
+runApplication surfaceTransformPoints -rollPitchYaw '(0 10 0)' constant/triSurface/naca0015_0deg.stl constant/triSurface/naca0015.stl
+runApplication blockMesh
+runApplication surfaceFeatureExtract
+runApplication snappyHexMesh -overwrite
+runApplication renumberMesh -overwrite
+
+# Make a 2D mesh by extruding a patch and solve to steady state.
+cd ../naca0015_2D
+runApplication extrudeMesh
+cp -r zero 0
+runApplication potentialFoam
+
+#runApplication `getApplication`
+
+# Decompose the case and run it in parallel;
+# reconstruct afterwards
+#runApplication decomposePar
+#runParallel `getApplication`
+#runApplication reconstructPar
+
+# Can be used to map the converged 2D solution to a 3D solution
+#cd ../naca0015_sHM
+#runApplication mapFields ../naca0015_2D -sourceTime latestTime
+
+#------------------------------------------------------------------------------
